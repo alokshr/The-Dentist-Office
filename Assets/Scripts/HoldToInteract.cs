@@ -31,7 +31,11 @@ public class HoldToInteract : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        
+        _camera = Camera.main;
+        _layerMask = LayerMask.NameToLayer("Everything");
+        _imageRoot = GameObject.Find("Borderless Image").GetComponent<RectTransform>();
+        _progressImage = GameObject.Find("Bordered Image").GetComponent<Image>();
+        _objNameText = GameObject.Find("Object Text").GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame

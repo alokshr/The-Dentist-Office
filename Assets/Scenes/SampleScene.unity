@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 27676706}
   - component: {fileID: 27676705}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Bordered Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 418865979}
   - component: {fileID: 418865978}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Borderless Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -581,15 +581,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ecbff8026afbc843be5aab564b9f864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Camera: {fileID: 963194227}
-  LayerMask:
+  _camera: {fileID: 963194227}
+  _layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  HoldTime: 2
-  ImageRoot: {fileID: 418865977}
-  ProgressImage: {fileID: 27676705}
-  ObjNameText: {fileID: 1627905452}
-  interactDistance: 1000
+  _holdTime: 2
+  _imageRoot: {fileID: 418865977}
+  _progressImage: {fileID: 27676705}
+  _objNameText: {fileID: 1627905452}
 --- !u!114 &854121687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -978,6 +977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba8ba029b54766e46af0a2209dfc9c94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interactType: 1
 --- !u!1 &1504885464
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,7 +1088,7 @@ GameObject:
   - component: {fileID: 1627905453}
   - component: {fileID: 1627905452}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Object Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
