@@ -8,24 +8,25 @@ public class HoldToInteract : MonoBehaviour
 {
     [SerializeField]
     [Tooltip("Camera being used to display UI")]
-    private Camera Camera;
+    private Camera _camera;
     [SerializeField]
     [Tooltip("Layer that interactable objects will be on")]
-    private LayerMask LayerMask;
+    private LayerMask _layerMask;
     [SerializeField]
     [Tooltip("How long the interact key must be held")]
-    private float HoldTime = 2f;
+    private float _holdTime = 2f;
     [SerializeField]
     [Tooltip("The root of the images")]
-    private RectTransform ImageRoot;
+    private RectTransform _imageRoot;
     [SerializeField]
     [Tooltip("The outline that shows interaction progress")]
-    private Image ProgressImage;
+    private Image _progressImage;
     [SerializeField]
-    private TextMeshProUGUI ObjNameText;
+    private TextMeshProUGUI _objNameText;
 
-    private Interactable ObjectToInteract;
-    private float CurrentInteractTimerElapsed;
+    private Interactable _objectToInteract;
+    private float _currentInteractTimerElapsed;
+    private float _interactDistance = 100f;
 
     // Start is called before the first frame update
     private void Start()
@@ -40,65 +41,65 @@ public class HoldToInteract : MonoBehaviour
 
         if (HasObjectSelected())
         {
-            ImageRoot.gameObject.SetActive(true);
+            _imageRoot.gameObject.SetActive(true);
 
-            if (Input.GetKeyDown(KeyCode.E)) {
+            if (Input.GetKey(KeyCode.E)) {
                 IncrementTimer();
             }
             else
             {
-                CurrentInteractTimerElapsed = 0f;
+                _currentInteractTimerElapsed = 0f;
             }
 
             UpdateProgressImage();
         } else
         {
-            ImageRoot.gameObject.SetActive(false);
+            _imageRoot.gameObject.SetActive(false);
         }
     }
 
     private void SelectObject()
     {
-        Ray ray = Camera.ViewportPointToRay(Vector3.one);
+        Ray ray = _camera.ViewportPointToRay(Vector3.one);
         Debug.DrawRay(ray.origin, ray.direction, Color.red);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100f, LayerMask))
+        if (Physics.Raycast(ray, out hit, _interactDistance, _layerMask))
         {
             var hitObj = hit.collider.GetComponent<Interactable>();
 
             if (hitObj == null)
             {
-                ObjectToInteract = null;
-            } else if (hitObj != null && hitObj != ObjectToInteract)
+                _objectToInteract = null;
+            } else if (hitObj != null && hitObj != _objectToInteract)
             {
-                ObjectToInteract = hitObj;
-                ObjNameText.text = "Use" + ObjectToInteract.gameObject.name;
+                _objectToInteract = hitObj;
+                _objNameText.text = "Use " + _objectToInteract.gameObject.name;
             }
         } else
         {
-            ObjectToInteract = null;
+            _objectToInteract = null;
         }
     }
 
     private bool HasObjectSelected()
     {
-        return ObjectToInteract != null;
+        return _objectToInteract != null;
     }
 
     private void IncrementTimer()
     {
-        CurrentInteractTimerElapsed += Time.deltaTime;
+        _currentInteractTimerElapsed += Time.deltaTime;
 
-        if (CurrentInteractTimerElapsed >= HoldTime)
+        if (_currentInteractTimerElapsed >= _holdTime)
         {
-            ObjectToInteract.Interact();
+            _objectToInteract.Interact();
         }
     }
 
     private void UpdateProgressImage()
     {
-        float progress = CurrentInteractTimerElapsed / HoldTime;
-        ProgressImage.fillAmount = progress;
+        float progress = _currentInteractTimerElapsed / _holdTime;
+        _progressImage.fillAmount = progress;
     }
 
 
