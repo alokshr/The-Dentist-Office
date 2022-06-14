@@ -2,32 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Interactable : MonoBehaviour
+public abstract class Interactable : MonoBehaviour
 {
 
-    enum Options
+    public enum Options
     {
         Held,
         Pressed
     };
 
-    [SerializeField]
-    Options _interactType = Options.Held;
+    public Options interactType = Options.Held;
+    public float interactTime = 1f;
+    public bool oneTimeUse = false;
+    public bool disabled = false;
 
-    // Start is called before the first frame update
-    void Start()
+    public virtual void Interact()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void Interact()
-    {
-        transform.position += new Vector3(0f, 10f, 0f);
+        transform.position += new Vector3(0f, 1f, 0f);
     }
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
-public class HoldToInteract : MonoBehaviour
+    
+public class Interaction : MonoBehaviour
 {
     [SerializeField]
     [Tooltip("Camera being used to display UI")]
@@ -14,7 +14,7 @@ public class HoldToInteract : MonoBehaviour
     private LayerMask _layerMask;
     [SerializeField]
     [Tooltip("How long the interact key must be held")]
-    private float _holdTime = 2f;
+    private float _holdTime;
     [SerializeField]
     [Tooltip("The root of the images")]
     private RectTransform _imageRoot;
@@ -27,6 +27,8 @@ public class HoldToInteract : MonoBehaviour
     private Interactable _objectToInteract;
     private float _currentInteractTimerElapsed;
     private float _interactDistance = 100f;
+
+    private bool _interacted = false;
 
     // Start is called before the first frame update
     private void Start()
@@ -45,17 +47,20 @@ public class HoldToInteract : MonoBehaviour
 
         if (HasObjectSelected())
         {
+            _holdTime = _objectToInteract.interactTime;
+
+            Debug.Log(_objectToInteract);
+
+            if (_objectToInteract.disabled)
+            {
+                return;
+            }
+
             _imageRoot.gameObject.SetActive(true);
 
-            if (Input.GetKey(KeyCode.E)) {
-                IncrementTimer();
-            }
-            else
-            {
-                _currentInteractTimerElapsed = 0f;
-            }
+            Press(_objectToInteract.interactType);
 
-            UpdateProgressImage();
+            UpdateProgressImage(_currentInteractTimerElapsed);
         } else
         {
             _imageRoot.gameObject.SetActive(false);
@@ -64,12 +69,12 @@ public class HoldToInteract : MonoBehaviour
 
     private void SelectObject()
     {
-        Ray ray = _camera.ViewportPointToRay(Vector3.one);
-        Debug.DrawRay(ray.origin, ray.direction, Color.red);
+        Ray ray = _camera.ViewportPointToRay(Vector3.one / 2f);
+        Debug.DrawRay(ray.origin, ray.direction / 2f, Color.red);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, _interactDistance, _layerMask))
         {
-            var hitObj = hit.collider.GetComponent<Interactable>();
+            var hitObj = hit.collider.GetComponentInParent<Interactable>();
 
             if (hitObj == null)
             {
@@ -94,15 +99,49 @@ public class HoldToInteract : MonoBehaviour
     {
         _currentInteractTimerElapsed += Time.deltaTime;
 
-        if (_currentInteractTimerElapsed >= _holdTime)
+        if (_currentInteractTimerElapsed >= _holdTime && !_interacted)
         {
             _objectToInteract.Interact();
+            _interacted = true;
+            if (_objectToInteract.oneTimeUse)
+            {
+                _objectToInteract.disabled = true;
+            }
         }
     }
 
-    private void UpdateProgressImage()
+    private void Press(Interactable.Options option)
     {
-        float progress = _currentInteractTimerElapsed / _holdTime;
+        switch (option){
+            case Interactable.Options.Pressed:
+                _currentInteractTimerElapsed = 0f;
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    _objectToInteract.Interact();
+                }
+                break;
+
+            case Interactable.Options.Held:
+                if (Input.GetKey(KeyCode.E))
+                {
+                    IncrementTimer();
+                }
+                else
+                {
+                    _currentInteractTimerElapsed = 0f;
+                    _interacted = false;
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void UpdateProgressImage(float time)
+    {
+        float progress = time / _holdTime;
         _progressImage.fillAmount = progress;
     }
 
